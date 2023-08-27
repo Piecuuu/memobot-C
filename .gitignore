@@ -1,0 +1,5 @@
+*.log
+*.db
+.vscode
+memobot
+config.json

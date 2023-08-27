@@ -1,10 +1,15 @@
 CC ?= gcc
 LIBS = -lpthread -lcurl -ldiscord -lsqlite3 #-latomic -lcrypto -lssl
-CFLAGS = -Wall -g -O0 -fstack-protector-all -Wpedantic
+CFLAGS = -Wall -fstack-protector-all -Wpedantic
 
 SRC=$(wildcard src/*.c)
 
-all: $(SRC)
-	$(CC) -o memobot $^ $(CFLAGS) $(LIBS)
+prod: $(SRC)
+	$(CC) -o memobot $^ $(CFLAGS) -O2 $(LIBS)
+
+debug: $(SRC)
+	$(CC) -o memobot $^ $(CFLAGS) -g -O0 $(LIBS)
+
+
 
 

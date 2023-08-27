@@ -12,4 +12,4 @@ debug: $(SRC)
 
 .PHONY : clean
 clean :
-	-rm memobot memobot.db *.log
+	-rm memobot *.db *.log

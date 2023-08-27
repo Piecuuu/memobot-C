@@ -141,7 +141,7 @@ void memobot_MemoHandler(struct discord *client, const struct discord_message_re
   // Get the user's avatar
   char full_avatar_string[95];
   snprintf(full_avatar_string, sizeof(full_avatar_string), "https://cdn.discordapp.com/avatars/%" PRIu64 "/%s.png", user.id, user.avatar);
-  printf("%s\n", full_avatar_string);
+  //printf("%s\n", full_avatar_string);
 
   // Combine all attachments links into a string
   int i = 0;

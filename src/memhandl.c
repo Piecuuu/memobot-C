@@ -207,7 +207,7 @@ void memobot_MemoHandler(struct discord *client, const struct discord_message_re
       */
       /*char *content_type;
       curl_easy_getinfo(curl_handle, CURLINFO_CONTENT_TYPE, &content_type);*/
-      printf("%lu bytes retrieved\n", (unsigned long)chunk.size);
+      //printf("%lu bytes retrieved\n", (unsigned long)chunk.size);
 
       struct discord_attachment singular_post_attachment = {
         .content = chunk.memory,

@@ -5,10 +5,10 @@ CFLAGS = -Wall -fstack-protector-all -Wpedantic
 SRC=$(wildcard src/*.c)
 
 prod: $(SRC)
-	$(CC) -o memobot $^ $(CFLAGS) -O2 $(LIBS)
+	$(CC) -o memobot $^ $(CFLAGS) -O2 $(LIBS) $(LDFLAGS)
 
 debug: $(SRC)
-	$(CC) -o memobot $^ $(CFLAGS) -g -O0 $(LIBS)
+	$(CC) -o memobot $^ $(CFLAGS) -g -O0 $(LIBS) $(LDFLAGS)
 
 .PHONY : clean
 clean :

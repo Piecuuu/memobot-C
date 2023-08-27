@@ -1,5 +1,5 @@
 CC ?= gcc
-LIBS = -lpthread -latomic -lcrypto -lssl -lcurl -ldiscord -lsqlite3
+LIBS = -lpthread -lcurl -ldiscord -lsqlite3 #-latomic -lcrypto -lssl
 CFLAGS = -Wall -g -O0 -fstack-protector-all -Wpedantic
 
 SRC=$(wildcard src/*.c)

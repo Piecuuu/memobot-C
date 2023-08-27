@@ -26,6 +26,18 @@
   }
 }
 ```
+## Change the channels in `src/memhandl.c`
+### An Example
+```c
+// List of channels for sending submissions
+u64snowflake memobot_mem_channel[2] = { // Change to the number of id's
+  1105815069322924076,
+  1106243204417851474
+};
+
+// Channel for submissions to be sent to
+u64snowflake memobot_board_channel = 1105940744268689429;
+```
 
 # How to build
 Run the following command in the bot's directory.

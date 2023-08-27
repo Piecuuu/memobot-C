@@ -130,7 +130,7 @@ void memobot_MemoHandler(struct discord *client, const struct discord_message_re
   discord_create_reaction(client, event->channel_id, event->message_id, 0, "⭐", NULL);
   struct discord_attachments* atts = message.attachments;
   char content[60];
-  sprintf(content, "<@%lu> | <#%lu>", message.author->id, message.channel_id);
+  snprintf(content, sizeof(content), "<@%" PRIu64 "> | <#%" PRIu64 ">", message.author->id, message.channel_id);
 
   // Get the user object for the embed author
   struct discord_user user;
@@ -139,8 +139,9 @@ void memobot_MemoHandler(struct discord *client, const struct discord_message_re
   assert(CCORD_OK == code && "Couldn't fetch user.");
 
   // Get the user's avatar
-  char full_avatar_string[82];
-  sprintf(full_avatar_string, "https://cdn.discordapp.com/avatars/%lu/%s.png", user.id, user.avatar);
+  char full_avatar_string[95];
+  snprintf(full_avatar_string, sizeof(full_avatar_string), "https://cdn.discordapp.com/avatars/%" PRIu64 "/%s.png", user.id, user.avatar);
+  printf("%s\n", full_avatar_string);
 
   // Combine all attachments links into a string
   int i = 0;

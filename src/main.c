@@ -11,7 +11,7 @@ void on_ready(struct discord *client, const struct discord_ready *event) {
   };
   discord_create_guild_application_command(client, event->application->id,
                                           (u64snowflake)GUILD_ID, &params, NULL);
-  printf("Logged in as %s#%s (%lu)\n", event->user->username, event->user->discriminator, event->user->id);
+  printf("Logged in as %s#%s (%" PRIu64 ")\n", event->user->username, event->user->discriminator, event->user->id);
 }
 
 void on_interaction(struct discord *client, const struct discord_interaction *event) {

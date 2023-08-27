@@ -10,6 +10,6 @@ prod: $(SRC)
 debug: $(SRC)
 	$(CC) -o memobot $^ $(CFLAGS) -g -O0 $(LIBS)
 
-
-
-
+.PHONY : clean
+clean :
+	-rm memobot memobot.db *.log

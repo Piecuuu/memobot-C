@@ -87,6 +87,7 @@ void emoji_setup_hashmap() {
   emoji_add_to_hashmap("netbsd", 1145831211999166464, "netbsd");
   emoji_add_to_hashmap("netrunner", 1145830592341098588, "netrunner");
   emoji_add_to_hashmap("nixos", 1145830596761878630, "nixos");
+  emoji_add_to_hashmap("rocky", 1149013740545654825, "rocky");
 }
 
 void emoji_add_to_hashmap(char* distro_id, uint64_t id, char* name) {

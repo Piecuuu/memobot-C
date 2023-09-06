@@ -20,6 +20,22 @@ void on_ready(struct discord *client, const struct discord_ready *event) {
                                               .name = "info",
                                               .description = "Bot info"
                                             }, NULL);
+
+  discord_create_global_application_command(client, event->application->id,
+                                            &(struct discord_create_global_application_command) {
+                                              .name = "force",
+                                              .description = "Force a submission",
+                                              .options = &(struct discord_application_command_options) {
+                                                .array = &(struct discord_application_command_option)
+                                                  {
+                                                    .name = "messageid",
+                                                    .description = "Message ID",
+                                                    .required = true,
+                                                    .type = (enum discord_application_command_option_types)DISCORD_APPLICATION_OPTION_STRING,
+                                                  },
+                                                .size = 1,
+                                              }
+                                            }, NULL);
   printf("Logged in as %s#%s (%" PRIu64 ")\n", event->user->username, event->user->discriminator, event->user->id);
 }
 
@@ -131,6 +147,34 @@ void on_interaction(struct discord *client, const struct discord_interaction *ev
 
     free(current_distro_emoji);
     free(os_emoji);
+  } else if(strcmp(event->data->name, "force") == 0) {
+    if(event->member->user->id != FORCE_COMMAND_USER_ID) return;
+     discord_create_interaction_response(client, event->id,
+                                          event->token, &(struct discord_interaction_response){
+                                          .type = DISCORD_INTERACTION_DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
+                                          .data = &(struct discord_interaction_callback_data) {
+                                            .flags = DISCORD_MESSAGE_EPHEMERAL
+                                          }
+                                        }, NULL);
+
+    char* message_id = event->data->options->array[0].value;
+
+    struct discord_message message;
+    struct discord_ret_message message_ret = { .sync = &message };
+    CCORDcode code;
+
+    // Get the message object and make check.
+    code = discord_get_channel_message(client, event->channel_id, char_to_snowflake(message_id), &message_ret);
+    assert(CCORD_OK == code && "Couldn't fetch message");
+
+    char uid[83];
+    snowflake_to_char(uid, message.author->id);
+
+    memobot_create_row(message_id, uid);
+    memobot_post_to_channel(client, &message, message_id, &message.id, &message.channel_id);
+    discord_edit_original_interaction_response(client, event->application_id, event->token, &(struct discord_edit_original_interaction_response){
+                                                .content = "Completed without errors.",
+                                              }, NULL);
   }
 }
 

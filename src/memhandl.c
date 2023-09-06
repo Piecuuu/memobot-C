@@ -79,7 +79,6 @@ void memobot_MemoHandler(struct discord *client, const struct discord_message_re
   // Get the first attachment
   //struct discord_attachment att = message.attachments->array[0];
 
-  char mid[83]; // i dont know why
   char uid[83];
 
   switch(rc) {
@@ -91,20 +90,9 @@ void memobot_MemoHandler(struct discord *client, const struct discord_message_re
       isposted = sqlite3_column_int(stmt, 4);
       break;
     case SQLITE_DONE:
-      snowflake_to_char(mid, event->message_id);
       snowflake_to_char(uid, message.author->id);
 
-      sqlite3_stmt* insertStatement;
-      sqlite3_prepare_v2(memobot_DB, "INSERT INTO posts (userid, messageid, mediaurl, isposted) VALUES (?1, ?2, ?3, false)", -1, &insertStatement, NULL);
-      sqlite3_bind_text(insertStatement, 1, uid, strlen(uid), SQLITE_STATIC);
-      sqlite3_bind_text(insertStatement, 2, mid, strlen(mid), SQLITE_STATIC);
-      sqlite3_bind_text(insertStatement, 3, "", 0, SQLITE_STATIC);
-      sqlite3_step(insertStatement);
-      //id = sqlite3_column_int(insertStatement, 0);
-      //isposted = sqlite3_column_int(insertStatement, 4);
-
-      sqlite3_finalize(insertStatement);
-      //sqlite3_free(insertStatement);
+      memobot_create_row(message_id, uid);
       break;
     default:
       // Error
@@ -276,4 +264,17 @@ void memobot_post_to_channel(struct discord* client, struct discord_message* mes
 
     i2++;
   }
+}
+
+void memobot_create_row(char* message_id, char* author_id) {
+  sqlite3_stmt* insertStatement;
+  sqlite3_prepare_v2(memobot_DB, "INSERT INTO posts (userid, messageid, mediaurl, isposted) VALUES (?1, ?2, ?3, false)", -1, &insertStatement, NULL);
+  sqlite3_bind_text(insertStatement, 1, author_id, strlen(author_id), SQLITE_STATIC);
+  sqlite3_bind_text(insertStatement, 2, message_id, strlen(message_id), SQLITE_STATIC);
+  sqlite3_bind_text(insertStatement, 3, "", 0, SQLITE_STATIC);
+  sqlite3_step(insertStatement);
+  //id = sqlite3_column_int(insertStatement, 0);
+  //isposted = sqlite3_column_int(insertStatement, 4);
+
+  sqlite3_finalize(insertStatement);
 }

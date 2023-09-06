@@ -7,3 +7,4 @@
 
 extern sqlite3* memobot_DB;
 void memobot_MemoHandler(struct discord *client, const struct discord_message_reaction_add *event);
+void memobot_post_to_channel(struct discord* client, struct discord_message* message, char* message_id, const u64snowflake* event_message_id, const u64snowflake* event_channel_id);

@@ -119,6 +119,10 @@ void memobot_MemoHandler(struct discord *client, const struct discord_message_re
   // A check for the number of reactions
   if(message.reactions->array[0].count < 10) return; //! CHANGE ME
 
+  memobot_post_to_channel(client, &message, message_id, &event->message_id, &event->channel_id);
+}
+
+void memobot_post_to_channel(struct discord* client, struct discord_message* message, char* message_id, const u64snowflake* event_message_id, const u64snowflake* event_channel_id) {
   // Set as posted
   sqlite3_stmt* isPostedStatement;
   sqlite3_prepare_v2(memobot_DB, "UPDATE posts SET isposted=1 WHERE messageid=?;", -1, &isPostedStatement, NULL);
@@ -127,15 +131,16 @@ void memobot_MemoHandler(struct discord *client, const struct discord_message_re
   sqlite3_finalize(isPostedStatement);
   //sqlite3_free(isPostedStatement);
 
-  discord_create_reaction(client, event->channel_id, event->message_id, 0, "⭐", NULL);
-  struct discord_attachments* atts = message.attachments;
+  discord_create_reaction(client, *event_channel_id, *event_message_id, 0, "⭐", NULL);
+  struct discord_attachments* atts = message->attachments;
   char content[60];
-  snprintf(content, sizeof(content), "<@%" PRIu64 "> | <#%" PRIu64 ">", message.author->id, message.channel_id);
+  snprintf(content, sizeof(content), "<@%" PRIu64 "> | <#%" PRIu64 ">", message->author->id, message->channel_id);
 
   // Get the user object for the embed author
+  CCORDcode code;
   struct discord_user user;
   struct discord_ret_user user_ret = { .sync = &user };
-  code = discord_get_user(client, message.author->id, &user_ret); // valgrind complains to this
+  code = discord_get_user(client, message->author->id, &user_ret); // valgrind complains to this
   assert(CCORD_OK == code && "Couldn't fetch user.");
 
   // Get the user's avatar
@@ -230,7 +235,7 @@ void memobot_MemoHandler(struct discord *client, const struct discord_message_re
   //snprintf(post_id, 21, "#%d", id);
   struct discord_embed postEmbed = {
     .color = 0xfcf403, // pissy yellow
-    .description = message.content,
+    .description = message->content,
     .author = &(struct discord_embed_author) {
       .name = user.username,
       .icon_url = full_avatar_string
@@ -251,7 +256,7 @@ void memobot_MemoHandler(struct discord *client, const struct discord_message_re
   };
 
   // Checks if it should add attachments
-  if(message.attachments->size > 0) {
+  if(message->attachments->size > 0) {
     params.attachments = &post_attachments;
   }
 

@@ -6,6 +6,7 @@
 #include "emoji.h"
 #include "distro.h"
 #include <sys/utsname.h>
+#include <sys/sysinfo.h>
 
 void on_ready(struct discord *client, const struct discord_ready *event) {
   struct discord_create_guild_application_command params = {
@@ -78,12 +79,20 @@ void on_interaction(struct discord *client, const struct discord_interaction *ev
       emoji_get_formatted_emoji(&os_emoji, "netbsd");
     } else if(strcmp(buffer.sysname, "Windows") == 0) {
       emoji_get_formatted_emoji(&os_emoji, "windows");
+    } else {
+      os_emoji = "";
     }
     char distro[256];
     snprintf(distro, sizeof(distro), "%s `%s`", current_distro_emoji, distro_pretty_name);
 
     char os[256];
     snprintf(os, sizeof(os), "%s `%s`", os_emoji, buffer.sysname);
+
+    char arch[256];
+    snprintf(arch, sizeof(arch), "`%s`", buffer.machine);
+
+    struct sysinfo sysinfo_buffer;
+    sysinfo(&sysinfo_buffer);
 
 
     struct discord_embed_field fields[] = {
@@ -99,6 +108,11 @@ void on_interaction(struct discord *client, const struct discord_interaction *ev
         .value = distro,
       },
       #endif
+      {
+        .Inline = true,
+        .name = "Arch",
+        .value = arch,
+      },
     };
 
     struct discord_embed embed = {
